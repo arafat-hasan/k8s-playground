@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  minikube:
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        - USER=$USER
+    container_name: test-kuber
+    restart: always
+    network_mode: host
+    environment:
+      - SSH_AUTH_SOCK=/ssh-agent
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $HOME/Share:/home/$USER/Share
+      - $SSH_AUTH_SOCK:/ssh-agent
+
