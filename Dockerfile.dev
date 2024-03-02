@@ -1,50 +1,12 @@
-FROM ubuntu:jammy
+FROM docker:dind
 
-ARG USER
+RUN arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) && \
+    wget https://storage.googleapis.com/minikube/releases/latest/minikube-linux-${arch}
+RUN arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) && \
+    install minikube-linux-${arch} /usr/local/bin/minikube
 
-ENV TZ Asia/Dhaka
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+COPY . /home/$USER/k8s-playground
 
-RUN apt-get update
-RUN apt-get update --fix-missing
-RUN apt-get install -y software-properties-common apt-utils sudo locales
-RUN apt-get update --fix-missing
-RUN apt-get install -y curl ssh net-tools iputils-ping vim git fish
-
-RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-RUN useradd -rm -d /home/$USER -s /bin/fish -g root -G sudo $USER
-RUN echo "$USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-
-RUN apt-get -y install gnupg ca-certificates lsb-release apt-transport-https
-
-RUN apt-get update
-RUN mkdir -p /etc/apt/keyrings
-RUN install -m 0755 -d /etc/apt/keyrings
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-RUN chmod a+r /etc/apt/keyrings/docker.asc
-
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-RUN apt-get update
-RUN apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-RUN usermod -aG docker ${USER}
-
-RUN curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_$(dpkg --print-architecture).deb
-RUN dpkg -i minikube_latest_$(dpkg --print-architecture).deb
-
-RUN curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-RUN echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
-RUN apt-get update
-RUN apt-get install -y kubectl
-RUN mkdir -p ~/.config/fish/
-RUN echo 'kubectl completion fish | source' >> ~/.config/fish/config.fish
-
-COPY --chown=$USER:root . /home/$USER/k8s-playground
-
-USER $USER
 WORKDIR /home/$USER/k8s-playground
 
-ENTRYPOINT ["sleep", "infinity"]
+ENTRYPOINT ["dockerd-entrypoint.sh"]
