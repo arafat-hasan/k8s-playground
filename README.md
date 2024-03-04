@@ -4,10 +4,9 @@
 
 This guide simplifies setting up a Kubernetes environment within a Docker container. This approach, utilizing **minikube-dind**, provides a convenient and isolated space for experimenting with Kubernetes.
 
-
 ## Building and Running the minikube-dind Image
 
-1. **Build the Image**
+### Build the Image
 
 ```bash
 docker compose up -d
@@ -15,7 +14,7 @@ docker compose up -d
 
 This command leverages Docker Compose to build and launch the `minikube-dind` image in the background (`-d`).
 
-2. **Accessing the Nested Docker Environment**
+### Accessing the Nested Docker Environment
 
 Interact with the nested Docker instance using:
 
@@ -25,7 +24,7 @@ docker exec -it minikube-dind-1 sh
 
 This command grants you interactive shell access (`-it`) within the container named `minikube-dind-1`.
 
-3. **Verifying Docker Functionality**
+### Verifying Docker Functionality
 
 Confirm the nested Docker environment is operational by running:
 
@@ -37,13 +36,14 @@ This command displays information about the Docker instance running within the `
 
 ## Starting the Kubernetes Cluster
 
-**Deploy the Kubernetes cluster**
+### Deploy the Kubernetes cluster
 
 ```bash
 sudo minikube start --driver=docker --force
 ```
 
 If fails at first attempt, try these commands:
+
 ```bash
 sudo minikube delete
 sudo sysctl fs.protected_regular=0
