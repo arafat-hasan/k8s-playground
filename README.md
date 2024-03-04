@@ -1,13 +1,13 @@
 # k8s-Playground
 
-## Creating a Kubernetes Playground with Nested Docker (minikube-dind)
+## Creating a Kubernetes Playground with Nested Docker
 
 This guide simplifies setting up a Kubernetes environment within a Docker container. This approach, utilizing **minikube-dind**, provides a convenient and isolated space for experimenting with Kubernetes.
 
 
-## Building and Running the minikube-dind Image:
+## Building and Running the minikube-dind Image
 
-1. **Build the Image:**
+1. **Build the Image**
 
    ```bash
    docker compose up -d
@@ -15,7 +15,7 @@ This guide simplifies setting up a Kubernetes environment within a Docker contai
 
    This command leverages Docker Compose to build and launch the `minikube-dind` image in the background (`-d`).
 
-2. **Accessing the Nested Docker Environment:**
+2. **Accessing the Nested Docker Environment**
 
    Interact with the nested Docker instance using:
 
@@ -25,7 +25,7 @@ This guide simplifies setting up a Kubernetes environment within a Docker contai
 
    This command grants you interactive shell access (`-it`) within the container named `minikube-dind-1`.
 
-3. **Verifying Docker Functionality:**
+3. **Verifying Docker Functionality**
 
    Confirm the nested Docker environment is operational by running:
 
@@ -37,7 +37,7 @@ This guide simplifies setting up a Kubernetes environment within a Docker contai
 
 ## Starting the Kubernetes Cluster
 
-**Deploy the Kubernetes cluster:**
+**Deploy the Kubernetes cluster**
 
    ```bash
    sudo minikube start --driver docker --force
