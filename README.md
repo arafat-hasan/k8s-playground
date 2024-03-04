@@ -1,64 +1,46 @@
-# k8s-playground
+**# k8s-Playground**
+
+**## Creating a Kubernetes Playground with Nested Docker (minikube-dind)**
+
+This guide simplifies setting up a Kubernetes environment within a Docker container. This approach, utilizing **minikube-dind**, provides a convenient and isolated space for experimenting with Kubernetes.
 
 
-## Setting Up a Kubernetes Playground with minikube-dind
+**## Building and Running the minikube-dind Image:**
 
-This guide will walk you through building and launching a Docker container that includes both `minikube` and a nested Docker instance (`docker-in-docker`, or `dind`). This environment allows you to experiment with Kubernetes within a contained and isolated setting.
+1. **Build the Image:**
 
-### Building the minikube-dind Image
+   ```bash
+   docker compose up -d
+   ```
 
-1. Open a terminal and navigate to the directory containing your `Dockerfile.dev`.
-2. Run the following command to build the Docker image named `minikube-dind`:
+   This command leverages Docker Compose to build and launch the `minikube-dind` image in the background (`-d`).
 
-```
-docker build -t minikube-dind -f Dockerfile.dev .
-```
+2. **Accessing the Nested Docker Environment:**
 
-This command instructs Docker to build an image using the instructions in `Dockerfile.dev` and tag the resulting image with the name `minikube-dind`.
+   Interact with the nested Docker instance using:
 
-### Launching the minikube-dind Container
+   ```bash
+   docker exec -it minikube-dind-1 sh
+   ```
 
-1. Run the following command to start a detached container named `minikube-dind-1` based on the `minikube-dind` image:
+   This command grants you interactive shell access (`-it`) within the container named `minikube-dind-1`.
 
-```
-docker run --privileged --name minikube-dind-1 -d minikube-dind
-```
+3. **Verifying Docker Functionality:**
 
-Here's a breakdown of the flags used:
+   Confirm the nested Docker environment is operational by running:
 
-* `--privileged`: Grants the container elevated privileges, necessary for running Docker within a container.
-* `--name minikube-dind-1`: Assigns a name to the container for easier identification.
-* `-d`: Runs the container in detached mode, allowing the terminal to return control immediately.
+   ```bash
+   sudo docker info
+   ```
 
-### Accessing the DinD Container
+   This command displays information about the Docker instance running within the `minikube-dind` container.
 
-To interact with the nested Docker environment, you need to access the container's shell:
+**## Starting the Kubernetes Cluster:**
 
-```
-docker exec -it minikube-dind-1 sh
-```
+**Deploy the Kubernetes cluster:**
 
-This command connects you to the running container (`minikube-dind-1`) in interactive mode (`-it`) and launches a shell (`sh`) within the container.
+   ```bash
+   sudo minikube start --driver docker --force
+   ```
 
-### Verifying Docker Functionality
-
-Once inside the container's shell, you can verify that the nested Docker instance is functioning by running:
-
-```
-docker info
-```
-
-This command should display information about the Docker environment running within the `minikube-dind` container.
-
-### Starting the Kubernetes Cluster
-
-With the nested Docker environment confirmed, it's time to deploy the Kubernetes cluster. **Note:** This step requires administrator access on your host machine.
-
-1. Open a separate terminal with administrator privileges.
-2. Run the following command to start a `minikube` cluster using the Docker driver and force recreation if necessary:
-
-```
-minikube start --driver docker --force
-```
-
-This command instructs `minikube` to utilize the Docker environment within the `minikube-dind` container to set up a Kubernetes cluster. The `--force` flag ensures any existing cluster is recreated.
+   This command instructs `minikube` to utilize the Docker environment within the `minikube-dind` container to set up a Kubernetes cluster. The `--force` flag ensures any existing cluster is recreated and enforces the use of the "docker" driver even with root privileges.
