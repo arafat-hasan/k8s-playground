@@ -40,7 +40,7 @@ This guide simplifies setting up a Kubernetes environment within a Docker contai
 **Deploy the Kubernetes cluster**
 
    ```bash
-   sudo minikube start --driver docker --force
+   sudo minikube start --driver=docker --force
    ```
 
    This command instructs `minikube` to utilize the Docker environment within the `minikube-dind` container to set up a Kubernetes cluster. The `--force` flag ensures any existing cluster is recreated and enforces the use of the "docker" driver even with root privileges.
